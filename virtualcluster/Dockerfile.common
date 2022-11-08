@@ -1,0 +1,18 @@
+FROM hub.tess.io/bingtlu/golang:1.18 as builder
+ARG TARGETOS
+ARG TARGETARCH
+ARG WHAT
+
+WORKDIR /go/virtualcluster
+COPY go.mod .
+COPY go.sum .
+COPY pkg/    pkg/
+COPY cmd/    cmd/
+RUN go mod download
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
+    go build -a -o ${WHAT} sigs.k8s.io/cluster-api-provider-nested/virtualcluster/cmd/${WHAT}
+
+FROM hub.tess.io/bingtlu/distroless-static:nonroot-${TARGETARCH}
+ARG WHAT
+COPY --from=builder /go/virtualcluster/${WHAT} /usr/local/bin/${WHAT}
+USER nonroot:nonroot
