@@ -12,7 +12,6 @@ RUN go mod download
 RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
     go build -a -o ${WHAT} sigs.k8s.io/cluster-api-provider-nested/virtualcluster/cmd/${WHAT}
 
-FROM hub.tess.io/bingtlu/distroless-static:nonroot-${TARGETARCH}
+FROM hub.tess.io/bingtlu/alpine:3.16
 ARG WHAT
 COPY --from=builder /go/virtualcluster/${WHAT} /usr/local/bin/${WHAT}
-USER nonroot:nonroot

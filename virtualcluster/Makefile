@@ -144,6 +144,10 @@ VC_SYNCER_IMG ?= $(VC_DOCKER_REGISTRY)/vc-syncer:${VERSION}
 docker-build-syncer:
 	docker buildx build --platform=linux/amd64,linux/arm64 --push -f Dockerfile.common --build-arg=WHAT=syncer  -t ${VC_SYNCER_IMG} .
 
+VN_AGENT_IMG ?= $(VC_DOCKER_REGISTRY)/vn-agent:${VERSION}
+docker-build-agent:
+	docker buildx build --platform=linux/amd64,linux/arm64 --push -f Dockerfile.common --build-arg=WHAT=vn-agent  -t ${VN_AGENT_IMG} .
+
 # Build docker image.
 #
 # 1. build all binaries.
