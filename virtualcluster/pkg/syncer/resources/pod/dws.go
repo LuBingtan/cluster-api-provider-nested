@@ -171,15 +171,17 @@ func (c *controller) reconcilePodCreate(clusterName, targetNamespace, requestUID
 		return nil
 	}
 
-	if vPod.Spec.NodeName != "" {
-		// For now, we skip vPod that has NodeName set to prevent tenant from deploying DaemonSet or DaemonSet alike CRDs.
-		err := c.MultiClusterController.Eventf(clusterName, &corev1.ObjectReference{
-			Kind:      "Pod",
-			Name:      vPod.Name,
-			Namespace: vPod.Namespace,
-			UID:       vPod.UID,
-		}, corev1.EventTypeWarning, "NotSupported", "The Pod has nodeName set in the spec which is not supported for now")
-		return err
+	if !featuregate.DefaultFeatureGate.Enabled(featuregate.VPodNodeName) {
+		if vPod.Spec.NodeName != "" {
+			// For now, we skip vPod that has NodeName set to prevent tenant from deploying DaemonSet or DaemonSet alike CRDs.
+			err := c.MultiClusterController.Eventf(clusterName, &corev1.ObjectReference{
+				Kind:      "Pod",
+				Name:      vPod.Name,
+				Namespace: vPod.Namespace,
+				UID:       vPod.UID,
+			}, corev1.EventTypeWarning, "NotSupported", "The Pod has nodeName set in the spec which is not supported for now")
+			return err
+		}
 	}
 
 	newObj, err := c.Conversion().BuildSuperClusterObject(clusterName, vPod)

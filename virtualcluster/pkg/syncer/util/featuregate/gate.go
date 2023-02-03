@@ -85,6 +85,14 @@ const (
 	// add clusterIP of pService to vService's externalIPs.
 	// So that vService can be resolved by using the k8s_external plugin in coredns.
 	VServiceExternalIP = "VServiceExternalIP"
+
+	// VPodNodeName is an experimental feature that allows the syncer to sync
+	// pod that has NodeName set.
+	VPodNodeName = "VPodNodeName"
+
+	// VNodeSchedulable is an experimental feature that allows the syncer to
+	// provide node with schedulable=true
+	VNodeSchedulable = "VNodeSchedulable"
 )
 
 var defaultFeatures = FeatureList{
@@ -100,6 +108,8 @@ var defaultFeatures = FeatureList{
 	DisableCRDPreserveUnknownFields: {Default: false},
 	RootCACertConfigMapSupport:      {Default: false},
 	VServiceExternalIP:              {Default: false},
+	VPodNodeName:                    {Default: false},
+	VNodeSchedulable:                {Default: false},
 }
 
 type Feature string

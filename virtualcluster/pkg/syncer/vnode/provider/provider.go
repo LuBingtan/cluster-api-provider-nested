@@ -78,3 +78,16 @@ func GetNodeTaints(p VirtualNodeProvider, node *corev1.Node, now metav1.Time) (t
 	}
 	return taints
 }
+
+// GetNodeTaintsOrigin is used to get pNode taints without `corev1.TaintNodeUnschedulable`
+func GetNodeTaintsOrigin(p VirtualNodeProvider, node *corev1.Node) (taints []corev1.Taint) {
+	nodeTaints := node.Spec.Taints
+	taintsToSync := p.GetTaintsToSync()
+	for i := range nodeTaints {
+		if _, found := taintsToSync[nodeTaints[i].Key]; !found {
+			continue
+		}
+		taints = append(taints, nodeTaints[i])
+	}
+	return taints
+}

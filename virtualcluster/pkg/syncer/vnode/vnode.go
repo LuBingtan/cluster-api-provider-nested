@@ -67,6 +67,10 @@ func NewVirtualNode(vNodeProvider provider.VirtualNodeProvider, node *corev1.Nod
 			Taints:        provider.GetNodeTaints(vNodeProvider, node, now),
 		},
 	}
+	if featuregate.DefaultFeatureGate.Enabled(featuregate.VNodeSchedulable) {
+		n.Spec.Unschedulable = node.Spec.Unschedulable
+		n.Spec.Taints = provider.GetNodeTaintsOrigin(vNodeProvider, node)
+	}
 
 	// fill in status
 	n.Status.Conditions = nodeConditions()
